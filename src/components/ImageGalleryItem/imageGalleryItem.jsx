@@ -9,22 +9,19 @@ export const ImageGalleryItem = ({id, webformatURL, largeImageURL}) => {
     const [largeImage, setLargeImages] = useState('');
     
     useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                handleCloseModal();
+            }
+        };
+
         document.addEventListener("keydown", handleKeyDown);
-    }, [])
-    
-    useEffect(() => {
+
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-        }, []);
+    }, []);
 
-    
-    
-    const handleKeyDown = (e) => {
-        if (e.key === "Escape") {
-            handleCloseModal();
-        }
-    };
 
     const handleBackdropClose = (e) => {
         if(e.currentTarget === e.target) {
@@ -47,7 +44,7 @@ export const ImageGalleryItem = ({id, webformatURL, largeImageURL}) => {
             <li className={css.galleryItem} key={id}>
                 <img className={css.galleryItemImage} src={webformatURL} alt="" onClick={() => handleOpenModal(largeImageURL)} />
                 {isOpenModal && (
-                    <Modal largeImage={largeImageURL} onCloseModal={handleBackdropClose} />
+                    <Modal largeImage={largeImage} onCloseModal={handleBackdropClose} />
                 )}
             </li>
     );
