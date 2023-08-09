@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SearchBar } from './Searchbar/searchbar';
 import { Loader } from './Loader/loader';
 import { ImageGallery } from './ImageGallery/imageGallery';
@@ -14,25 +14,18 @@ export const App = () => {
   const [searchButtonClicked, setSearchButtonClicked] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    if (searchButtonClicked && searchQuery !== "") {
-      fetchMaterials();
-      setSearchButtonClicked(false);
-    }
-  }, [searchButtonClicked, searchQuery]);
-
-  const fetchMaterials = async () => {
+  const fetchMaterials = useCallback(async () => {
     try {
       if (searchQuery === '') {
         Notiflix.Notify.warning('Please, write something into the search field');
         return;
-      }
+      };
 
       setStatus('pending');
 
       const imageData = await getMaterials(searchQuery, page);
 
-      if(imageData.hits.length === 0) {
+      if (imageData.hits.length === 0) {
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
         setIsLoadMoreShown(false);
         setStatus('idle');
@@ -41,13 +34,18 @@ export const App = () => {
         setStatus('resolved');
         setIsLoadMoreShown(true);
       }
-
-      
     } catch (error) {
       setStatus('rejected');
       console.error('Error fetching materials:', error);
     }
-  };
+  }, [searchQuery, page]);
+
+  useEffect(() => {
+    if (searchButtonClicked) {
+      fetchMaterials();
+      setSearchButtonClicked(false);
+    }
+  }, [searchButtonClicked, searchQuery, fetchMaterials]);
 
   const handleSearchSubmit = () => {
     setMaterials([]);
