@@ -1,4 +1,3 @@
-import Notiflix from 'notiflix';
 
 export const getMaterials = async (searchQuery, page) => {
     const API_KEY = '36806904-a94ef5850b37be256607932e3'
